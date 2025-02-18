@@ -37,7 +37,7 @@ public class Room {
     }
 
     public Map<String, Room> getExit(String direction) {
-
+        return exits;
     }
 
     public void setExits(String direction, Room room) {

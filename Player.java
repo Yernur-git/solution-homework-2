@@ -28,7 +28,7 @@ public class Player {
     }
 
     public void addItem(Item item) {
-
+        items.add(item);
     }
 
     public void removeItem(Item item) {
