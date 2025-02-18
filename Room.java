@@ -1,46 +1,62 @@
 package mud;
 
-import java.util.List;
-import java.util.Map;
-
 public class Room {
-    private String name;
+    private String roomName;
     private String description;
-    private List<Item> items;
-    private Map<String, Room> exits;
+    private Room forward;
+    private Room backward;
+    private Room left;
+    private Room right;
+    private Item item;
 
-    public Room(String name, String description, List<Item> items, Map<String, Room> exits) {
-        this.name = name;
+    public Room(String roomName, String description) {
+        this.roomName = roomName;
         this.description = description;
-        this.items = items;
-        this.exits = exits;
     }
 
-    public String getName() {
-        return name;
+    public void directions(Room forward, Room backward, Room left, Room right, Item item) {
+        this.forward = forward;
+        this.backward = backward;
+        this.left = left;
+        this.right = right;
+    }
+
+    public Room getDirection(String direction) {
+        switch (direction) {
+            case "forward":
+                return forward;
+            case "backward":
+                return backward;
+            case "left":
+                return left;
+            case "right":
+                return right;
+            default:
+                return null;
+        }
+    }
+
+    public String getRoomName() {
+        return roomName;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public List<Item> getItems() {
-        return items;
+    public Item getItem() {
+        return item;
     }
 
-    public void addItems(Item item){
-
+    public void setItem(Item item) {
+        this.item = item;
     }
 
-    public void removeItem(Item item){
-
-    }
-
-    public Map<String, Room> getExit(String direction) {
-        return exits;
-    }
-
-    public void setExits(String direction, Room room) {
-
+    public String displayRoomItems(){
+        if (item != null && item.getName() != null) {
+            return "In the room (" + roomName + "), you'll find: " + item.getName();
+        } else {
+            return "The room (" + roomName + ") has no items.";
+        }
     }
 }
