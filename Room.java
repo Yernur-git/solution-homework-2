@@ -19,6 +19,7 @@ public class Room {
         this.backward = backward;
         this.left = left;
         this.right = right;
+        this.item = item;
     }
 
     public Room getDirection(String direction) {
@@ -44,8 +45,15 @@ public class Room {
         return description;
     }
 
-    public Item getItem() {
-        return item;
+    public Item getItem(String itemName) {
+        if (item != null && item.getName().equalsIgnoreCase(itemName)) {
+            return item;
+        }
+        return null;
+    }
+
+    public void removeItem(Item item) {
+        this.item = null;
     }
 
     public void setItem(Item item) {

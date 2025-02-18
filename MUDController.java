@@ -13,44 +13,125 @@ public class MUDController {
     }
 
     public void runGameLoop() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("welcome to MUD!");
+        System.out.println("type 'help' to see the list of commands.");
+
         while (running) {
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("welcome to MUD!");
-            System.out.println("write 'help' to see the list of commands.");
             System.out.print("> ");
-            String user_input = scanner.next();
+            String user_input = scanner.nextLine();
             handleInput(user_input);
         }
+
+        scanner.close();
     }
 
     public void handleInput(String input) {
-        // TODO:
-        // 1) Parse the input into a command and optionally an argument
-        // 2) Use a switch/case (or if/else) to call the correct method below
-        //    based on the command word
+        input = input.trim().toLowerCase();
 
+        String command = "";
+        String argument = "";
 
+        int spaceIndex = input.indexOf(" ");
+
+        if (spaceIndex != -1) {
+            command = input.substring(0, spaceIndex);
+            argument = input.substring(spaceIndex + 1).trim();
+        } else {
+            command = input;
+        }
+
+        switch (command){
+            case "help":
+                showHelp();
+                break;
+            case "quit":
+            case "exit":
+                running = false;
+                break;
+            case "look":
+                lookAround();
+                break;
+            case "move":
+                if (!argument.isEmpty()) {
+                    move(argument);
+                } else {
+                    System.out.println("Please specify a direction: forward, backward, left, or right.");
+                }
+                break;
+            case "pick":
+                if (!argument.equals("")) {
+                    pickUp(argument);
+                }
+                else {
+                    System.out.println("please specify an item to pick up.");
+                }
+                break;
+            case "inventory":
+                checkInventory();
+                break;
+            default:
+                System.out.println("invalid command. type 'help' to see the list of commands.");
+                break;
+        }
     }
 
     private void lookAround() {
-        // TODO: Print information about the player's current room
-
+        Room currentRoom = player.getCurrentRoom();
+        if (currentRoom != null) {
+            System.out.println(currentRoom.displayRoomItems());
+        }
+        else {
+            System.out.println("you are not in a room.");
+        }
     }
 
     private void move(String direction) {
-        // TODO: Attempt to move to the next room in the given direction
-        //       If there's no room in that direction, print an error message
-        //       If successfully moved, describe the new room
+        Room currentRoom = player.getCurrentRoom();
+        Room nextRoom = null;
 
+        switch (direction) {
+            case "forward":
+                nextRoom = currentRoom.getDirection("forward");
+                break;
+            case "back":
+            case "backward":
+                nextRoom = currentRoom.getDirection("backward");
+                break;
+            case "left":
+                nextRoom = currentRoom.getDirection("left");
+                break;
+            case "right":
+                nextRoom = currentRoom.getDirection("right");
+                break;
+            default:
+                System.out.println("invalid direction. type 'help' to see the list of commands.");
+                return;
+            }
+        if (nextRoom != null) {
+            player.setCurrentRoom(nextRoom);
+            System.out.println("you moved " + direction + " to " + nextRoom.displayRoomItems());
+        }
+        else {
+            System.out.println("you can't move in that direction. there's no room in that direction.");
+        }
     }
 
     private void pickUp(String arg) {
-        // TODO:
-        // 1) Parse out the item name if 'arg' starts with "up "
-        // 2) Check if that item exists in the current room
-        // 3) Remove from room, add to player's inventory
-
-
+        Room currentRoom = player.getCurrentRoom();
+        if (currentRoom != null) {
+            Item item = currentRoom.getItem(arg);
+            if (item != null) {
+                currentRoom.removeItem(item);
+                player.pickUpItem(item);
+            }
+            else {
+                System.out.println("item not found.");
+            }
+        }
+        else {
+            System.out.println("you are not in a room.");
+        }
     }
 
     private void checkInventory() {
